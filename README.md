@@ -7,4 +7,4 @@ Happy worldshaping!~
 <br>
 
 Credits to [TelepathicGrunt](https://github.com/TelepathicGrunt) for their work in figuring out and documenting good practices on structure generation with Minecraft Forge.  
-A big part of Worldshape runs on their proposed [prototype](https://github.com/TelepathicGrunt/StructureTutorialMod).
+A big part of Worldshape runs on their [prototype](https://github.com/TelepathicGrunt/StructureTutorialMod).
