@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "priority": 1100,
+  "package": "com.simibubi.worldshape.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "worldshape.refmap.json",
+  "mixins": [
+    "RelocateDatapackMixin"
+  ],
+  "client": [],
+  "minVersion": "0.8"
+}
