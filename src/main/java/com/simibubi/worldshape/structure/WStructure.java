@@ -150,7 +150,7 @@ public class WStructure extends Structure<NoFeatureConfig> {
 			if (!determineY.isPresent())
 				return;
 
-			BlockPos centerPos = new BlockPos(x, determineY.get() + placement.getSurfaceOffset(), z);
+			BlockPos centerPos = new BlockPos(x, determineY.get(), z);
 			JigsawManager.addPieces(dynamicRegistryManager, jigsawConfig, AbstractVillagePiece::new, chunkGenerator,
 				templateManagerIn, centerPos, pieces, random, true, false);
 
@@ -161,7 +161,7 @@ public class WStructure extends Structure<NoFeatureConfig> {
 			int xOffset = centerPos.getX() - structureCenter.getX();
 			int zOffset = centerPos.getZ() - structureCenter.getZ();
 			for (StructurePiece structurePiece : pieces) {
-				structurePiece.move(xOffset, 0, zOffset);
+				structurePiece.move(xOffset, placement.getSurfaceOffset(), zOffset);
 				placement.getTerraformedSurfaceOffset()
 					.ifPresent(i -> structurePiece.getBoundingBox().y0 += i);
 			}

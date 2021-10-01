@@ -25,8 +25,8 @@ public abstract class WStructureTemplate {
 			String type = JSONUtils.getAsString(jo, "type", "");
 			if (type.equals("single"))
 				return new SimpleTemplate().read(jo);
-			if (type.equals("jigsaw"))
-				return new JigsawTemplate().read(jo);
+			if (type.equals("pool"))
+				return new PoolTemplate().read(jo);
 		}
 		throw new JsonSyntaxException("Cannot find Structure template information for " + id);
 	}
@@ -55,8 +55,7 @@ public abstract class WStructureTemplate {
 		@Override
 		WStructureTemplate read(JsonObject json) {
 			super.read(json);
-			rigid = JSONUtils.getAsString(json, "projection", "rigid")
-				.equals("rigid");
+			rigid = !JSONUtils.getAsBoolean(json, "followTerrain", false);
 
 			String empty = "minecraft:empty";
 
@@ -91,7 +90,7 @@ public abstract class WStructureTemplate {
 
 	}
 
-	static class JigsawTemplate extends WStructureTemplate {
+	static class PoolTemplate extends WStructureTemplate {
 
 		@Override
 		WStructureTemplate read(JsonObject json) {
