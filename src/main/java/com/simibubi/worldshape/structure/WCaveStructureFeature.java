@@ -79,7 +79,8 @@ public class WCaveStructureFeature extends Feature<NoFeatureConfig> {
 
 		DynamicRegistries dynamicRegistryManager = level.registryAccess();
 		TemplateManager structureManager = level.getStructureManager();
-		VillageConfig jigsawConfig = new VillageConfig(template.create(dynamicRegistryManager), 10);
+		VillageConfig jigsawConfig = new VillageConfig(template.create(dynamicRegistryManager), definition.getTemplate()
+			.getMaxDepth());
 
 		int surface = chunkGenerator.getFirstFreeHeight(x, z, Heightmap.Type.WORLD_SURFACE_WG);
 		Optional<Integer> determineY = placement.determineY(chunkGenerator, reader, seedRandom, x, z, surface);

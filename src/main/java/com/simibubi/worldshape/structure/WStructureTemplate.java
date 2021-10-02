@@ -18,6 +18,7 @@ import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 public abstract class WStructureTemplate {
 
 	ResourceLocation templateId;
+	int maxDepth;
 
 	public static WStructureTemplate get(ResourceLocation id, JsonElement json) {
 		if (json.isJsonObject()) {
@@ -33,6 +34,7 @@ public abstract class WStructureTemplate {
 
 	WStructureTemplate read(JsonObject json) {
 		templateId = new ResourceLocation(JSONUtils.getAsString(json, "id"));
+		maxDepth = JSONUtils.getAsInt(json, "maxDepth", 10);
 		return this;
 	}
 
@@ -40,6 +42,10 @@ public abstract class WStructureTemplate {
 
 	public Supplier<JigsawPattern> create(DynamicRegistries registries) {
 		return () -> createInner(registries);
+	}
+	
+	public int getMaxDepth() {
+		return maxDepth;
 	}
 
 	protected abstract JigsawPattern createInner(DynamicRegistries registries);

@@ -142,7 +142,9 @@ public class WStructure extends Structure<NoFeatureConfig> {
 
 			WStructureTemplate template = definition.getTemplate();
 			WStructurePlacement placement = definition.getPlacement();
-			VillageConfig jigsawConfig = new VillageConfig(template.create(dynamicRegistryManager), 10);
+			VillageConfig jigsawConfig =
+				new VillageConfig(template.create(dynamicRegistryManager), definition.getTemplate()
+					.getMaxDepth());
 
 			int surface = chunkGenerator.getFirstFreeHeight(x, z, Heightmap.Type.WORLD_SURFACE_WG);
 			Optional<Integer> determineY =
