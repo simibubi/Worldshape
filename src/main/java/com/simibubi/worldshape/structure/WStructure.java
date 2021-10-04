@@ -24,6 +24,7 @@ import net.minecraft.world.gen.GenerationStage.Decoration;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
+import net.minecraft.world.gen.feature.jigsaw.JigsawManager.IPieceFactory;
 import net.minecraft.world.gen.feature.structure.AbstractVillagePiece;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
@@ -153,8 +154,13 @@ public class WStructure extends Structure<NoFeatureConfig> {
 				return;
 
 			BlockPos centerPos = new BlockPos(x, determineY.get(), z);
-			JigsawManager.addPieces(dynamicRegistryManager, jigsawConfig, AbstractVillagePiece::new, chunkGenerator,
-				templateManagerIn, centerPos, pieces, random, true, false);
+			Integer terraformOffset = placement.getTerraformedSurfaceOffset()
+				.orElse(0);
+			IPieceFactory factory = (m, j, p, groundDelta, r, bb) -> new AbstractVillagePiece(m, j, p,
+				groundDelta + terraformOffset, r, bb);
+
+			JigsawManager.addPieces(dynamicRegistryManager, jigsawConfig, factory, chunkGenerator, templateManagerIn,
+				centerPos, pieces, random, true, false);
 
 			Vector3i structureCenter = pieces.get(0)
 				.getBoundingBox()
@@ -162,11 +168,8 @@ public class WStructure extends Structure<NoFeatureConfig> {
 
 			int xOffset = centerPos.getX() - structureCenter.getX();
 			int zOffset = centerPos.getZ() - structureCenter.getZ();
-			for (StructurePiece structurePiece : pieces) {
-				structurePiece.move(xOffset, placement.getSurfaceOffset(), zOffset);
-				placement.getTerraformedSurfaceOffset()
-					.ifPresent(i -> structurePiece.getBoundingBox().y0 += i);
-			}
+			for (StructurePiece structurePiece : pieces) 
+				structurePiece.move(xOffset, placement.getSurfaceOffset() + terraformOffset, zOffset);
 
 			calculateBoundingBox();
 		}
