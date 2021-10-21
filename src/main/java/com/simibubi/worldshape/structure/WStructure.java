@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
+
 import com.simibubi.worldshape.foundation.Pair;
 
 import net.minecraft.block.BlockState;
@@ -156,8 +158,13 @@ public class WStructure extends Structure<NoFeatureConfig> {
 			BlockPos centerPos = new BlockPos(x, determineY.get(), z);
 			Integer terraformOffset = placement.getTerraformedSurfaceOffset()
 				.orElse(0);
-			IPieceFactory factory = (m, j, p, groundDelta, r, bb) -> new AbstractVillagePiece(m, j, p,
-				groundDelta + terraformOffset, r, bb);
+
+			MutableBoolean firstPiece = new MutableBoolean(true);
+			IPieceFactory factory = (m, j, p, groundDelta, r, bb) -> {
+				int resultDelta = firstPiece.booleanValue() ? groundDelta + terraformOffset : groundDelta;
+				firstPiece.setFalse();
+				return new AbstractVillagePiece(m, j, p, resultDelta, r, bb);
+			};
 
 			JigsawManager.addPieces(dynamicRegistryManager, jigsawConfig, factory, chunkGenerator, templateManagerIn,
 				centerPos, pieces, random, true, false);
@@ -168,7 +175,7 @@ public class WStructure extends Structure<NoFeatureConfig> {
 
 			int xOffset = centerPos.getX() - structureCenter.getX();
 			int zOffset = centerPos.getZ() - structureCenter.getZ();
-			for (StructurePiece structurePiece : pieces) 
+			for (StructurePiece structurePiece : pieces)
 				structurePiece.move(xOffset, placement.getSurfaceOffset() + terraformOffset, zOffset);
 
 			calculateBoundingBox();

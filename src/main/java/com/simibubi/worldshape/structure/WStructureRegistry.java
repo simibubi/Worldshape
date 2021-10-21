@@ -1,6 +1,8 @@
 package com.simibubi.worldshape.structure;
 
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,37 +54,46 @@ public class WStructureRegistry {
 		DeferredRegister.create(ForgeRegistries.FEATURES, Worldshape.ID);
 
 	public static void load() {
-		String structuresFolder = Worldshape.ID + "/structure_spawners";
-		FilesHelper.createFolderIfMissing(structuresFolder);
+		String dataFolder = Worldshape.ID + "/data";
+		FilesHelper.createFolderIfMissing(dataFolder);
 
 		CUSTOM_TYPES.clear();
 		COLLISION_SURFACE.clear();
 		COLLISION_CAVE.clear();
 
-		FilesHelper.forEachInFolder(Paths.get(structuresFolder), ".json", path -> {
-			String filename = path.getFileName()
-				.toString()
-				.replace(".json", "");
+		FilesHelper.forEachInFolder(Paths.get(dataFolder), "/", packpath -> {
+			Path structuresFolder = packpath.resolve("structure_spawners");
+			if (!Files.exists(structuresFolder))
+				return;
+			String packId = packpath.getFileName()
+				.toString();
 
-			ResourceLocation id = Worldshape.asResource(Lang.asId(FilesHelper.slug(filename)));
-			WStructureType type = new WStructureType(id);
-			type.deserializeJSON(FilesHelper.loadJson(path.toString())
-				.getAsJsonObject());
+			FilesHelper.forEachInFolder(structuresFolder, ".json", path -> {
+				String filename = path.getFileName()
+					.toString()
+					.replace(".json", "");
 
-			if (type.getPlacement()
-				.isFeaturePlacement()) {
-				type.registryFeatureObject =
-					CUSTOM_FEATURES.register(id.getPath(), () -> new WCaveStructureFeature(type));
-				CUSTOM_TYPES.put(id, type);
-				if (type.shouldAvoidOthers())
-					COLLISION_CAVE.add(id);
+				ResourceLocation id = Worldshape.asResource(packId + "/" + Lang.asId(FilesHelper.slug(filename)));
+				WStructureType type = new WStructureType(id);
+				type.deserializeJSON(FilesHelper.loadJson(path.toString())
+					.getAsJsonObject());
 
-			} else {
-				type.registryStructureObject = CUSTOM_STRUCTURES.register(id.getPath(), () -> new WStructure(type));
-				CUSTOM_TYPES.put(id, type);
-				if (type.shouldAvoidOthers())
-					COLLISION_SURFACE.add(id);
-			}
+				if (type.getPlacement()
+					.isFeaturePlacement()) {
+					type.registryFeatureObject =
+						CUSTOM_FEATURES.register(id.getPath(), () -> new WCaveStructureFeature(type));
+					CUSTOM_TYPES.put(id, type);
+					if (type.shouldAvoidOthers())
+						COLLISION_CAVE.add(id);
+
+				} else {
+					type.registryStructureObject = CUSTOM_STRUCTURES.register(id.getPath(), () -> new WStructure(type));
+					CUSTOM_TYPES.put(id, type);
+					if (type.shouldAvoidOthers())
+						COLLISION_SURFACE.add(id);
+				}
+
+			});
 
 		});
 	}

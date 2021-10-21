@@ -33,9 +33,10 @@ public class FilesHelper {
 	public static void forEachInFolder(Path folder, String validExtension, Consumer<Path> callback) {
 		try {
 			Files.list(folder)
-				.filter(f -> !Files.isDirectory(f) && f.getFileName()
-					.toString()
-					.endsWith(validExtension))
+				.filter(f -> validExtension.equals("/") ? Files.isDirectory(f)
+					: !Files.isDirectory(f) && f.getFileName()
+						.toString()
+						.endsWith(validExtension))
 				.forEach(callback);
 		} catch (NoSuchFileException e) {
 		} catch (IOException e) {
