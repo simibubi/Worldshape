@@ -12,6 +12,7 @@ import com.simibubi.worldshape.foundation.Pair;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -162,8 +163,9 @@ public class WStructure extends Structure<NoFeatureConfig> {
 			MutableBoolean firstPiece = new MutableBoolean(true);
 			IPieceFactory factory = (m, j, p, groundDelta, r, bb) -> {
 				int resultDelta = firstPiece.booleanValue() ? groundDelta + terraformOffset : groundDelta;
+				Rotation rot = firstPiece.booleanValue() && placement.lockRotation ? Rotation.NONE : r;
 				firstPiece.setFalse();
-				return new AbstractVillagePiece(m, j, p, resultDelta, r, bb);
+				return new AbstractVillagePiece(m, j, p, resultDelta, rot, bb);
 			};
 
 			JigsawManager.addPieces(dynamicRegistryManager, jigsawConfig, factory, chunkGenerator, templateManagerIn,
