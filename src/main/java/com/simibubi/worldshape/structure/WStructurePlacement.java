@@ -23,9 +23,10 @@ public abstract class WStructurePlacement {
 	int minY;
 	int maxY;
 	int surfaceOffset;
+	boolean lockRotation;
 	boolean needsWater;
 	Optional<Integer> terraform;
-	
+
 	public static WStructurePlacement get(ResourceLocation id, JsonElement json) {
 		if (json.isJsonObject()) {
 			JsonObject jo = json.getAsJsonObject();
@@ -46,6 +47,7 @@ public abstract class WStructurePlacement {
 		maxY = JSONUtils.getAsInt(json, "maxY", 256);
 		minY = JSONUtils.getAsInt(json, "minY", 0);
 		surfaceOffset = JSONUtils.getAsInt(json, "offset", 0);
+		lockRotation = JSONUtils.getAsBoolean(json, "lockRotation", false);
 		needsWater = JSONUtils.getAsBoolean(json, "fluidSurface", false);
 		terraform = Optional.ofNullable(json.has("terraform") ? JSONUtils.getAsInt(json, "terraform", -1) : null);
 		return this;
@@ -75,6 +77,10 @@ public abstract class WStructurePlacement {
 
 	public boolean fluidSurface() {
 		return needsWater;
+	}
+
+	public boolean lockRotation() {
+		return lockRotation;
 	}
 
 	public final Optional<Integer> determineY(ChunkGenerator generator, IBlockReader reader, SharedSeedRandom random,
